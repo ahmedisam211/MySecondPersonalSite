@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>title=Home</title>
     <style>
-        /* This section handles the background and centers the text */
-        
         body {
             margin: 0;
             padding: 0;
@@ -16,17 +14,98 @@
             justify-content: center;
             align-items: center;
             background-color: #111111;
-            /* Deep dark gray/black background */
             color: #ffffff;
-            /* White text */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             text-align: center;
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
-        /* This keeps your text neat and readable */
+        
+        body.light-mode {
+            background-color: #f9f9f9;
+            color: #111111;
+        }
+        
+        body.light-mode p {
+            color: #555555;
+        }
+        
+        .bad-text {
+            display: none;
+        }
+        
+        .good-text {
+            display: inline;
+        }
+        
+        body.light-mode .bad-text {
+            display: inline;
+        }
+        
+        body.light-mode .good-text {
+            display: none;
+        }
+        
+        body.light-mode {
+            background-color: #ffffff;
+            color: #000000;
+            font-family: "Courier New", Courier, monospace;
+        }
+        
+        body.light-mode .content {
+            background-color: #ffffff;
+            border: 6px solid #000000;
+            border-radius: 0;
+            box-shadow: 15px 15px 0px #000000;
+            text-align: left;
+            transform: rotate(-2deg);
+        }
+        
+        body.light-mode p {
+            color: #000000;
+            font-weight: bold;
+        }
+        
+        body.light-mode .cool-link {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 10px 20px;
+            font-weight: bold;
+            border: 3px solid #000000;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        
+        body.light-mode .cool-link::after {
+            display: none;
+        }
+        
+        body.light-mode .cool-link:hover {
+            background-color: #ff0000;
+            color: #ffffff;
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            background: transparent;
+            color: inherit;
+            border: 1px solid currentColor;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: opacity 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            opacity: 0.6;
+        }
         
         .content {
             max-width: 600px;
-            padding: 20px;
+            padding: 40px;
         }
         
         h1 {
@@ -38,10 +117,8 @@
         p {
             font-size: 1.2rem;
             color: #888888;
-            /* Softer gray text for the subtitle */
             line-height: 1.5;
         }
-        /* The animation keyframes */
         
         @keyframes fadeInUp {
             from {
@@ -53,28 +130,159 @@
                 transform: translateY(0);
             }
         }
-        /* Apply it to your content */
         
         .content {
             animation: fadeInUp 1s ease-out forwards;
         }
-        /* Optional: Make the paragraph fade in slightly after the heading */
         
         p {
             opacity: 0;
             animation: fadeInUp 1s ease-out 0.5s forwards;
-            /* The 0.5s is a delay */
+        }
+        
+        .cool-link {
+            color: inherit;
+            text-decoration: none;
+            font-size: 1.2rem;
+            position: relative;
+            padding-bottom: 5px;
+        }
+        
+        .cool-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: currentColor;
+            transition: width 0.3s ease;
+        }
+        
+        .cool-link:hover::after {
+            width: 100%;
+        }
+        
+         ::selection {
+            background-color: #c8ff00;
+            color: #000000;
+        }
+        
+        .theme-message {
+            position: absolute;
+            top: 65px;
+            right: 20px;
+            font-size: 0.85rem;
+            color: #888888;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .theme-message.show {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
+
 </head>
 
 <body>
-
+    <button id="theme-toggle" class="theme-toggle">Good Mode</button>
+    <span id="theme-message" class="theme-message"></span>
     <div class="content">
-        <h1>Hello, I'm Ahmed.</h1>
-        <p>Welcome to my corner of the internet. More coming soon.</p>
+        <h1>
+            <span class="good-text">Hello, I'm Ahmed.</span>
+            <span class="bad-text">'NOT' Hello.</span>
+        </h1>
+        <p>
+            <span class="good-text">Welcome to my minimalist, peaceful corner of the internet.</span>
+            <span class="bad-text">Why would you click that? Go back to dark mode.</span>
+        </p>
+        <a href="#" id="action-link" class="cool-link">
+            <span class="good-text">Get in touch</span>
+            <span class="bad-text">CONTINUE TO PAGE</span>
+        </a>
     </div>
+    <br>
+    <script>
+        console.log("Hello there!");
+        console.log("Nice of you to peek under the hood. You should hire me.");
 
+        const toggleButton = document.getElementById('theme-toggle');
+        const themeMessage = document.getElementById('theme-message');
+        const body = document.body;
+        let messageTimer;
+
+        const currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme === 'light') {
+            body.classList.add('light-mode');
+            toggleButton.textContent = 'Bad Mode';
+        } else {
+            toggleButton.textContent = 'Good Mood';
+        }
+
+
+        toggleButton.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+
+            clearTimeout(messageTimer);
+
+            if (body.classList.contains('light-mode')) {
+                toggleButton.textContent = 'Bad Mode';
+                localStorage.setItem('theme', 'light');
+                themeMessage.textContent = 'Are you a psychopath? ';
+            } else {
+                toggleButton.textContent = 'Good Mood';
+                localStorage.setItem('theme', 'dark');
+                themeMessage.textContent = 'Ah, back to normal';
+            }
+
+            themeMessage.classList.add('show');
+
+            messageTimer = setTimeout(() => {
+                themeMessage.classList.remove('show');
+            }, 2000);
+        });
+
+        const actionLink = document.getElementById('action-link');
+        const badTextSpan = actionLink.querySelector('.bad-text');
+        let hasBeenWarned = false;
+
+        actionLink.addEventListener('click', (event) => {
+
+            if (body.classList.contains('light-mode')) {
+                event.preventDefault();
+
+                if (!hasBeenWarned) {
+                    alert("CRITICAL WARNING: Are you sure you want to do this?");
+
+
+                    badTextSpan.textContent = "YES, CONTINUE TO PAGE";
+                    hasBeenWarned = true;
+                } else {
+
+                    body.classList.remove('light-mode');
+
+                    toggleButton.textContent = 'Good Mood';
+                    localStorage.setItem('theme', 'dark');
+                    hasBeenWarned = false;
+                    badTextSpan.textContent = "CONTINUE TO PAGE";
+
+
+                    clearTimeout(messageTimer);
+                    themeMessage.textContent = 'Welcome Back!        ';
+                    themeMessage.classList.add('show');
+                    messageTimer = setTimeout(() => {
+                        themeMessage.classList.remove('show');
+                    }, 2000);
+                }
+            }
+
+        });
+    </script>
 </body>
 
 </html>
